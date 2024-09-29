@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {  GetCategory, getColor, getProducts } from "../Api/api";
+import {  GetCategory, getColor, getProducts, getSubcategory } from "../Api/api";
 import { GetBrands } from "../Api/apibrand";
 
 const initialState = {
@@ -10,6 +10,7 @@ const initialState = {
   editBrand:"",
   editId: null,
   colors: [],
+  Subcategory:[],
   
 
 };
@@ -27,7 +28,7 @@ export const TodoSlicer = createSlice({
      setEditBrandDId: (state, action) => {
         state.editId = action.payload;
      },
-     
+
      
 
   },
@@ -44,7 +45,9 @@ export const TodoSlicer = createSlice({
     builder.addCase(getColor.fulfilled, (state, action) => {
         state.colors = action.payload;
       });
-    
+     builder.addCase(getSubcategory.fulfilled, (state, action) => {
+        state.Subcategory = action.payload;
+      });
       
 
   },

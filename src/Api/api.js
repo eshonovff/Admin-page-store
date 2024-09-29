@@ -109,7 +109,7 @@ export const deleteCategory = createAsyncThunk('TodoSlicer/deleteCategory',async
 
 //  get color 
 
-export const getColor = createAsyncThunk('counterSlice/getColor',async()=>{
+export const getColor = createAsyncThunk('TodoSlicer/getColor',async()=>{
     try {
         const {data} = await axiosRequest('/Color/get-colors')
         return data.data
@@ -120,3 +120,13 @@ export const getColor = createAsyncThunk('counterSlice/getColor',async()=>{
   
 
 
+//  get Subcategory
+
+export const getSubcategory = createAsyncThunk('TodoSlicer/getSubcategory',async()=>{
+    try {
+        const {data} = await axiosRequest(`/SubCategory/get-sub-category`)
+        return data.data
+    } catch (error) {
+        console.error(error)
+    }
+  })
