@@ -3,6 +3,7 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosRequest } from "../utils/axiosRequest";
+import axios from "axios";
  
 
 //  get product 
@@ -130,3 +131,76 @@ export const getSubcategory = createAsyncThunk('TodoSlicer/getSubcategory',async
         console.error(error)
     }
   })
+
+
+
+//    addd product  
+
+export const addProduct = createAsyncThunk('TodoSlicer/addProduct',async(product, {dispatch})=>{
+
+    console.log(product.Images[0].files)
+    const form = new FormData()
+   
+ 
+    
+    form.append('BrandId',product.Brand)
+    form.append('ColorId',product.selectedColorId)
+    form.append('ProductName',product.ProductName)
+    form.append('Description',product.Description)
+    form.append('Quantity',product.Quantity)
+    form.append('Code',product.code )
+    form.append('Price',product.Price )
+    form.append('HasDiscount',product.HasDiscount)
+    form.append('SubCategoryId',product.SubCategoryId )
+
+    try {
+        const {data} = await axios.post(`http://135.181.152.249:8072/Product/add-product`, form , 
+            {
+                headers:
+                {
+                    Authorization: `Bearer ${localStorage.getItem("access_token")}`
+                }
+            }
+        )
+        console.log(data)
+        dispatch(getProducts())
+        return data.data.products
+    } catch (error) {
+        console.error(error);
+        
+    }
+})
+  
+
+
+
+
+//  get product by id 
+
+
+export const getProductById = createAsyncThunk('TodoSlicer/getProductById',async(id)=>{
+    try {
+        const {data} = await axiosRequest(`/Product/get-product-by-id?id=${id}`)
+        return data.data
+    } catch (error) {
+        console.error(error)
+    }
+  })
+
+
+//  edit  product by id
+
+
+export const putProduct = createAsyncThunk('TodoSlicer/putProduct',async(product, {dispatch})=>{
+ console.log(product);
+ 
+    try {
+        const {data} = await axiosRequest.put(`/Product/update-product?Id=${product.idx}&BrandId=${product.Brand}&ColorId=${product.selectedColorId}&ProductName=${product.ProductName}&Description=${product.Description}&Quantity=${product.Quantity}&Code=${product.code}&Price=${product.Price}&HasDiscount=${product.HasDiscount}&SubCategoryId=${product.SubCategoryId}`)
+        console.log(data)
+        dispatch(getProducts())
+        return data.data.products
+    } catch (error) {
+        console.error(error);
+        
+    }
+})

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {  GetCategory, getColor, getProducts, getSubcategory } from "../Api/api";
+import {  addProduct, GetCategory, getColor, getProductById, getProducts, getSubcategory } from "../Api/api";
 import { GetBrands } from "../Api/apibrand";
 
 const initialState = {
@@ -11,6 +11,7 @@ const initialState = {
   editId: null,
   colors: [],
   Subcategory:[],
+  productById:[],
   
 
 };
@@ -34,6 +35,12 @@ export const TodoSlicer = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getProducts.fulfilled, (state, action) => {
+      state.data = action.payload;
+    });
+    builder.addCase(getProductById.fulfilled, (state, action) => {
+        state.productById = action.payload;
+      });
+    builder.addCase(addProduct.fulfilled, (state, action) => {
       state.data = action.payload;
     });
     builder.addCase(GetCategory.fulfilled, (state, action) => {

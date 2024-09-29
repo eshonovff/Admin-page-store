@@ -66,6 +66,7 @@ const Other = () => {
     setOpenBrands(false);
   };
 
+
   const handleEditBrand = (brand) => {
     setOpenBrands(true);
 
@@ -398,6 +399,8 @@ const Other = () => {
           </Dialog>
         </div>
       )}
+
+
       {Banners && (
         <div className="flex flex-col px-7 pt-7 pb-32 max-md:px-5 max-md:pb-24">
           <div className="flex flex-wrap gap-10 items-start mt-10 w-full max-md:max-w-full">
@@ -599,6 +602,8 @@ const Other = () => {
             </div>
           </div>
         </div>
+
+        
       )}
 
      

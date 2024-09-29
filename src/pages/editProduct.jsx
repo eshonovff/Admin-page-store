@@ -1,17 +1,23 @@
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import FileBase64 from "react-file-base64";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct, GetCategory, getColor, getSubcategory } from "../Api/api";
+import { GetCategory, getColor, getProducts, getSubcategory, putProduct } from "../Api/api";
 import { GetBrands } from "../Api/apibrand";
 import { Button } from "@mui/material";
 
-const AddNewProduct = () => {
+const EditProduct = () => {
+    const { productById,category, brands, colors,Subcategory } = useSelector((state) => state.TodoSlicer);
+    const {id}= useParams();
+    const idx = id.slice(1, id.length)
+console.log("idx", idx);
+
+    console.log(productById);
+    console.log(productById.brand);
+    
   const [Brand, setBrand] = useState("");
   const [Categories, setCategories] = useState("");
   const [selectedColorId, setSelectedColorId] = useState(null);
@@ -22,13 +28,19 @@ const AddNewProduct = () => {
   const [Quantity, setQuantity] = useState(null);
   const [HasDiscount, setHasDiscount] = useState(false)
   const [SubCategoryId , setSubCategoryId ]= useState(""); 
-  const [Images, setImages] = useState([
-    {
-      base64: "https://cdn.builder.io/api/v1/image/assets/TEMP/a0d75007d028389deffbcdaee35a1237bb73f22e658ec79c344115a50ddf640c?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123",
-    },
-  ]);
  
-console.log(SubCategoryId);
+ 
+
+  useEffect(() =>
+{
+    setProductName(productById.productName)
+    setDescription(productById.description)
+    setCode(productById.code)
+    setPrice(productById.price)
+    setQuantity(productById.quantity)
+    setHasDiscount(false)
+} , [productById])
+ 
 
   const dispatch = useDispatch();
   const handleChange = (event) => {
@@ -36,12 +48,7 @@ console.log(SubCategoryId);
   };
  const navigate = useNavigate()
 
-  const handleShowImage=(e)=>{
-    console.log("even", e);
-    
-    setImages(e);
-  }
-
+ 
   //  for color
   const handleDivClick = (id) => {
     setSelectedColorId(id); // Set the clicked ID
@@ -53,29 +60,15 @@ console.log(SubCategoryId);
     dispatch(GetBrands());
     dispatch(getColor());
     dispatch(getSubcategory());
+    dispatch(getProducts())
   }, []);
-  const { category, brands, colors,Subcategory } = useSelector((state) => state.TodoSlicer);
 
 
 
   const handleSaveProduct = () => {
     
-    dispatch(addProduct({Brand, Categories, selectedColorId,ProductName, Description, code,Price, Quantity, HasDiscount, SubCategoryId, Images }))
-    setBrand("");
-    setCategories("");
-    setSelectedColorId(null);
-    setProductName("");
-    setDescription("");
-    setCode("");
-    setPrice(null);
-    setQuantity(null);
-    setHasDiscount(false);
-    setSubCategoryId("");
-    setImages([ // Resetting Images to its initial state
-      {
-        base64: "https://cdn.builder.io/api/v1/image/assets/TEMP/a0d75007d028389deffbcdaee35a1237bb73f22e658ec79c344115a50ddf640c?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123",
-      },
-    ]);
+    dispatch(putProduct({Brand,idx, Categories, selectedColorId,ProductName, Description, code,Price, Quantity, HasDiscount, SubCategoryId }))
+    
     navigate(`/products`); 
     
   }
@@ -489,77 +482,7 @@ console.log(SubCategoryId);
                   </Select>
                 </FormControl>
             </div>
-            <div className="flex flex-col mt-7 w-full">
-              <div className="text-base font-bold text-gray-900">Images</div>
-              <StyledWrapper>
-                <label className="custum-file-upload">
-                  <div className="icon">
-                  {Images.map((elem, index) => (
-        <img key={index} className="w-[80px] h-[80px]  rounded-full ml-4" src={elem.base64} alt="" />
-      ))}
-
-                  </div>
-                  <div className="text">
-                    <span>Click to upload or drag and drop</span>
-                  </div>
-                  <FileBase64 multiple={true} onDone={handleShowImage}  />
-                </label>
-              </StyledWrapper>
-              <div className="flex overflow-hidden flex-col mt-2.5 w-full text-sm rounded border border-solid border-slate-200">
-                <div className="flex overflow-hidden gap-5 items-start p-3 w-full leading-none text-gray-500 bg-neutral-100">
-                  <div className="w-[54px]">Image</div>
-                  <div className="flex-1 shrink basis-0">File name</div>
-                  <div>Action</div>
-                </div>
-                <div className="flex flex-col px-3 pt-3 pb-4 w-full font-medium leading-loose text-gray-900 whitespace-nowrap">
-                  <div className="flex gap-5 items-center w-full">
-                    <img
-                      loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto rounded-lg aspect-square w-[54px]"
-                    />
-                    <div className="flex-1 shrink self-stretch my-auto basis-0">
-                      Healthcare_Erbology.png
-                    </div>
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/436434c477904d4c4b58088221ba6372bb73cb4b7a8b9a8a6acef5adebbc51ad?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto w-10 aspect-square"
-                    />
-                  </div>
-                  <div className="flex gap-5 items-center mt-4 w-full">
-                    <img
-                      loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto rounded-lg aspect-square w-[54px]"
-                    />
-                    <div className="flex-1 shrink self-stretch my-auto basis-0">
-                      Healthcare_Erbology.png
-                    </div>
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/436434c477904d4c4b58088221ba6372bb73cb4b7a8b9a8a6acef5adebbc51ad?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto w-10 aspect-square"
-                    />
-                  </div>
-                  <div className="flex gap-5 items-center mt-4 w-full">
-                    <img
-                      loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd6197519d908e04bf04025d26a555276c5901262364b8fcd575c955aa915605?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto rounded-lg aspect-square w-[54px]"
-                    />
-                    <div className="flex-1 shrink self-stretch my-auto basis-0">
-                      Healthcare_Erbology.png
-                    </div>
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/436434c477904d4c4b58088221ba6372bb73cb4b7a8b9a8a6acef5adebbc51ad?placeholderIfAbsent=true&apiKey=e940a6a49e084455a40af88cc6d38123"
-                      className="object-contain shrink-0 self-stretch my-auto w-10 aspect-square"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+             
           </div>
         </div>
       </div>
@@ -567,49 +490,6 @@ console.log(SubCategoryId);
   );
 };
 
-const StyledWrapper = styled.div`
-  .custum-file-upload {
-    height: 150px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cacaca;
-    background-color: rgba(255, 255, 255, 1);
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0px 48px 35px -48px rgba(0, 0, 0, 0.1);
-  }
 
-  .custum-file-upload .icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 
-  .custum-file-upload .icon img {
-    height: 80px;
-    fill: rgba(75, 85, 99, 1);
-  }
-
-  .custum-file-upload .text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .custum-file-upload .text span {
-    font-weight: 400;
-    color: rgba(75, 85, 99, 1);
-  }
-
-  .custum-file-upload input {
-    display: none;
-  }
-`;
-
-export default AddNewProduct;
+export default EditProduct;

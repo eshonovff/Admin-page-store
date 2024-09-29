@@ -6,13 +6,13 @@ import Select from '@mui/material/Select';
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useEffect, useState } from "react";
-import { deleteProduct, getProducts } from "../Api/api";
+import { deleteProduct, getProductById, getProducts } from "../Api/api";
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Link,  } from "react-router-dom";
+import { Link, useNavigate,  } from "react-router-dom";
 const Products = () => {
-
+const navigate = useNavigate()
   const [age, setAge] = useState('');
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false);
@@ -28,6 +28,10 @@ const Products = () => {
   );
 console.log(data);
 
+const editProductById =(id)=>{
+  navigate(`/editProduct/:${id}`)
+  dispatch(getProductById(id))
+}
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -131,13 +135,15 @@ console.log(data);
                 <div className="flex items-center">
                   <div>
                   <EditIcon
+                  onClick={()=>editProductById(elem.id)}
                 fontSize="large"
   sx={{
     color: "#1E5EFF",
     marginRight: "10px",
     ":hover": {
-      border: "1px solid #1E5EFF",
-      borderRadius: "4px", // Optional: Add some border-radius for a smoother look
+      background:"#1e5eff42",
+      padding:"5px",
+      borderRadius: "50%", // Optional: Add some border-radius for a smoother look
     },
   }}
 />

@@ -8,6 +8,7 @@ import LogIn from "./pages/adminpage/logIn"
 import Admin from "./Layout/Admin" 
  
 import AddNewProduct from "./pages/addNew"
+import EditProduct from "./pages/editProduct"
  
  
 
@@ -48,7 +49,11 @@ const App = () => {
         {
           path:"/addNew",
           element: <AddNewProduct />
-        }
+        },
+        {
+          path: "/editProduct/:id",
+          element: <EditProduct />
+        },
  
       ]
     },
